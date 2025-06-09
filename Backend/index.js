@@ -12,6 +12,7 @@ const Course = require("./Models/Course");
 const learningPathRoutes = require("./routes/learningPath");
 
 const app = express();
+const PORT = process.env.PORT || 5003;
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -500,9 +501,8 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server with error handling
-const PORT = process.env.PORT || 5003;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
     console.log(`MongoDB URI: ${process.env.MONGO_URI || 'mongodb://localhost:27017/education_website'}`);
 }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Button } from 'reactstrap';
+import { Container, Button, Row, Col, Card } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
@@ -14,15 +14,10 @@ const BrainBreak = () => {
             <section className="brain-break-section">
                 <Container>
                     <div className="brain-break-content">
-                        <h1>Brain Break</h1>
-                        <p>Take a short break and challenge your mind with our interactive quiz!</p>
-                        <Button
-                            color="primary"
-                            size="lg"
-                            className="start-quiz-btn"
-                            onClick={() => navigate('/quiz')}
-                        >
-                            Start Quiz
+                        <h1>Take a Brain Break</h1>
+                        <p>Need a quick break? Take a short quiz to refresh your mind!</p>
+                        <Button color="primary" size="lg" onClick={() => navigate('/quiz')}>
+                            Take a Quiz
                         </Button>
                     </div>
                 </Container>

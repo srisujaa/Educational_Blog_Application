@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import { Container, Row, Col, Button } from 'reactstrap';
 import './brainbreak.css';
 
 const BrainBreak = () => {
@@ -10,6 +10,7 @@ const BrainBreak = () => {
     const [questionType, setQuestionType] = useState('riddle'); // 'riddle' or 'quiz'
     const [totalQuestionsAttempted, setTotalQuestionsAttempted] = useState(0);
     const [breakTimeOver, setBreakTimeOver] = useState(false);
+    const [quizStarted, setQuizStarted] = useState(false);
     
     // Constants for limits
     const MAX_QUESTIONS = 5; // Maximum questions allowed
@@ -53,7 +54,7 @@ const BrainBreak = () => {
     // Timer effect for total break time
     useEffect(() => {
         let totalTimer;
-        if (totalTimeLeft > 0 && !breakTimeOver) {
+        if (totalTimeLeft > 0 && !breakTimeOver && quizStarted) {
             totalTimer = setInterval(() => {
                 setTotalTimeLeft(prev => {
                     if (prev <= 1) {
@@ -66,7 +67,7 @@ const BrainBreak = () => {
         }
 
         return () => clearInterval(totalTimer);
-    }, [totalTimeLeft, breakTimeOver]);
+    }, [totalTimeLeft, breakTimeOver, quizStarted]);
 
     const checkAndUpdateAttempts = () => {
         const newTotal = totalQuestionsAttempted + 1;
@@ -107,8 +108,30 @@ const BrainBreak = () => {
     };
 
     useEffect(() => {
-        setCurrentQuestion(getRandomQuestion());
-    }, [questionType]); // eslint-disable-line react-hooks/exhaustive-deps
+        if (quizStarted) {
+            setCurrentQuestion(getRandomQuestion());
+        }
+    }, [questionType, quizStarted]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (!quizStarted) {
+        return (
+            <section className="brain-break">
+                <Container>
+                    <Row className="justify-content-center">
+                        <Col lg="8">
+                            <div className="brain-break__wrapper">
+                                <h2>Brain Break! 🧠</h2>
+                                <p>Take a quick break with a fun quiz!</p>
+                                <Button color="primary" size="lg" onClick={() => setQuizStarted(true)}>
+                                    Take a Quiz
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Container>
+            </section>
+        );
+    }
 
     if (breakTimeOver) {
         return (
@@ -199,26 +222,18 @@ const BrainBreak = () => {
                                         type="text"
                                         value={userAnswer}
                                         onChange={(e) => setUserAnswer(e.target.value)}
-                                        placeholder="Your answer..."
+                                        placeholder="Enter your answer"
                                         disabled={showAnswer}
                                     />
                                 )}
 
-                                {!showAnswer ? (
-                                    <button className="btn submit-btn" onClick={handleSubmit}>
-                                        Submit Answer
+                                <button onClick={handleSubmit} disabled={showAnswer}>
+                                    Submit
+                                </button>
+                                {showAnswer && (
+                                    <button onClick={handleNext}>
+                                        Next Question
                                     </button>
-                                ) : (
-                                    <div className="answer-section">
-                                        <p className="answer">
-                                            {userAnswer.toLowerCase() === currentQuestion.answer.toLowerCase() 
-                                                ? "🎉 Correct!" 
-                                                : `Wrong! The answer is: ${currentQuestion.answer}`}
-                                        </p>
-                                        <button className="btn next-btn" onClick={handleNext}>
-                                            Next Question
-                                        </button>
-                                    </div>
                                 )}
                             </div>
                         </div>

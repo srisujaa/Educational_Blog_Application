@@ -23,7 +23,7 @@ const BlogEditor = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
 
-    const categories = ['Technology', 'Education', 'Programming', 'Career', 'Other'];
+    const categories = ['Technology', 'Education', 'Programming', 'Career', 'Machine Learning','AI', 'Other'];
 
     useEffect(() => {
         // Load current user from localStorage
