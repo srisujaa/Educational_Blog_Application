@@ -1,0 +1,55 @@
+.brain-break-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 200px);
+}
+
+.brain-break-content {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.brain-break-content h1 {
+    color: #17bf9e;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.brain-break-content p {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.start-quiz-btn {
+    background-color: #17bf9e;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.start-quiz-btn:hover {
+    background-color: #15ae91;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .brain-break-section {
+        padding: 40px 0;
+    }
+
+    .brain-break-content {
+        padding: 20px;
+    }
+
+    .brain-break-content h1 {
+        font-size: 2rem;
+    }
+} 

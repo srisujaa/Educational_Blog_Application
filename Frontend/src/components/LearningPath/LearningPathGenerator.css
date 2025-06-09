@@ -1,0 +1,249 @@
+.learning-path-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: calc(100vh - 200px);
+}
+
+.learning-path-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.learning-path-header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.learning-path-header p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.path-settings {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.path-settings h3 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+}
+
+.setting-group {
+    margin-bottom: 25px;
+}
+
+.setting-group label {
+    display: block;
+    color: #34495e;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.setting-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2c3e50;
+    background-color: white;
+    transition: all 0.3s;
+}
+
+.setting-group select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.topic-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.topic-tag {
+    padding: 8px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    background: white;
+    color: #6c757d;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.topic-tag:hover {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.topic-tag.selected {
+    background: #3498db;
+    border-color: #3498db;
+    color: white;
+}
+
+.generate-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+    background: #3498db;
+    border: none;
+    transition: all 0.3s;
+}
+
+.generate-btn:hover:not(:disabled) {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.generate-btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress-container small {
+    display: block;
+    text-align: center;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+.learning-path-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.learning-path-content h3 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+}
+
+.path-timeline {
+    position: relative;
+}
+
+.path-timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.path-item {
+    position: relative;
+    padding-left: 50px;
+    margin-bottom: 30px;
+}
+
+.path-number {
+    position: absolute;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.path-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+.path-details:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.path-details h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.path-details p {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.path-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.time-estimate {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .learning-path-section {
+        padding: 40px 0;
+    }
+
+    .learning-path-header h1 {
+        font-size: 2rem;
+    }
+
+    .path-settings, .learning-path-content {
+        margin-bottom: 30px;
+    }
+
+    .path-item {
+        padding-left: 40px;
+    }
+
+    .path-number {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+} 

@@ -1,0 +1,39 @@
+.learning-path-section {
+    padding: 80px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 200px);
+}
+
+.learning-path-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+}
+
+.learning-path-container h1 {
+    color: #17bf9e;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.learning-path-container p {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .learning-path-section {
+        padding: 40px 0;
+    }
+
+    .learning-path-container {
+        padding: 20px;
+    }
+
+    .learning-path-container h1 {
+        font-size: 2rem;
+    }
+} 

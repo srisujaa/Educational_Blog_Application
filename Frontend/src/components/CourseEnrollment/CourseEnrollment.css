@@ -1,0 +1,224 @@
+.course-enrollment {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.course-header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.instructor {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.course-details {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.course-details img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.course-info {
+    flex: 1;
+}
+
+.description {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2ecc71;
+    margin-bottom: 0.5rem;
+}
+
+.enrolled {
+    color: #666;
+}
+
+.enroll-button {
+    display: block;
+    width: 200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.enroll-button:hover {
+    background-color: #357abd;
+}
+
+.enroll-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.enrolled-message {
+    text-align: center;
+    color: #2ecc71;
+    font-size: 1.2rem;
+    margin: 2rem 0;
+}
+
+.course-lessons {
+    margin-top: 3rem;
+}
+
+.course-lessons h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.lesson {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.lesson h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.lesson p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.lesson video {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 1rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    color: #e74c3c;
+}
+
+.success-message {
+    text-align: center;
+    padding: 1rem;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.payment-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payment-note {
+    text-align: center;
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.payment-button {
+    background-color: #4a90e2;
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+.payment-button:hover {
+    background-color: #357abd;
+}
+
+.cancel-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 0.5rem;
+}
+
+.cancel-button:hover {
+    background-color: #5a6268;
+} 
