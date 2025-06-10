@@ -10,6 +10,8 @@ const path = require('path');
 const fs = require('fs');
 const Course = require("./Models/Course");
 const learningPathRoutes = require("./routes/learningPath");
+const auth = require('./middleware/auth'); // Import auth middleware
+const adminAuth = require('./middleware/adminAuth'); // Import adminAuth middleware
 
 const app = express();
 const PORT = process.env.PORT || 5003;
@@ -104,11 +106,20 @@ app.post("/signup", async (req, res) => {
         // Hash password and create user
         console.log('Creating new user:', { name, email });
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword });
+        
+        // Set role as admin for specific email
+        const role = email === 'admin@edublog.com' ? 'admin' : 'user';
+        
+        const newUser = new User({ 
+            name, 
+            email, 
+            password: hashedPassword,
+            role 
+        });
         
         console.log('Saving user to database...');
         await newUser.save();
-        console.log('User saved successfully:', { id: newUser._id, email });
+        console.log('User saved successfully:', { id: newUser._id, email, role });
 
         // Return success with user data
         res.status(201).json({ 
@@ -116,7 +127,8 @@ app.post("/signup", async (req, res) => {
             user: {
                 _id: newUser._id,
                 name: newUser.name,
-                email: newUser.email
+                email: newUser.email,
+                role: newUser.role
             }
         });
     } catch (error) {
@@ -160,7 +172,8 @@ app.post("/login", async (req, res) => {
             user: {
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role // Include role in login response
             }
         });
     } catch (error) {
@@ -169,8 +182,8 @@ app.post("/login", async (req, res) => {
     }
 });
 
-// Get all users
-app.get("/users", async (req, res) => {
+// Admin-only user management routes
+app.get("/users", auth, adminAuth, async (req, res) => {
     try {
         const users = await User.find().select('-password');
         res.status(200).json(users);
@@ -179,8 +192,7 @@ app.get("/users", async (req, res) => {
     }
 });
 
-// Get a specific user
-app.get("/users/:id", async (req, res) => {
+app.get("/users/:id", auth, adminAuth, async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
         if (!user) return res.status(404).json({ message: "User not found" });
@@ -190,26 +202,36 @@ app.get("/users/:id", async (req, res) => {
     }
 });
 
-// Update a user
-app.put("/users/:id", async (req, res) => {
+app.put("/users/:id", auth, adminAuth, async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, role } = req.body;
         const user = await User.findById(req.params.id);
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Update user fields
-        if (name) user.name = name;
-        if (email) user.email = email;
+        user.name = name || user.name;
+        user.email = email || user.email;
+        // Only allow admin to change role
+        if (req.user.role === 'admin' && role) {
+            user.role = role;
+        }
 
         await user.save();
-        res.status(200).json({ message: "User updated successfully" });
+        res.status(200).json({
+            message: "User updated successfully",
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
+        console.error('User update error:', error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
-// Delete a user
-app.delete("/users/:id", async (req, res) => {
+app.delete("/users/:id", auth, adminAuth, async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user) return res.status(404).json({ message: "User not found" });
@@ -220,24 +242,26 @@ app.delete("/users/:id", async (req, res) => {
 });
 
 // Blog Routes
-app.post('/blogs', upload.single('image'), async (req, res) => {
+app.post('/blogs', auth, upload.single('image'), async (req, res) => {
     try {
         console.log('Received blog creation request:', req.body); // Debug log
-        const { title, category, content, author, published } = req.body;
+        const { title, category, content, status } = req.body; // Include status in destructuring
         // Store only the relative path for the image
         const image = req.file ? path.join('uploads', path.basename(req.file.path)) : '';
         
-        console.log('Parsed data:', { title, category, content, author, published, image }); // Debug log
+        // Determine 'published' boolean based on 'status' field
+        const isPublished = status === 'published';
 
-        if (!title || !category || !content || !author) {
-            console.log('Missing required fields:', { title, category, content, author }); // Debug log
+        console.log('Parsed data for new blog:', { title, category, content, author: req.user._id, published: isPublished, status, image }); // Debug log
+
+        if (!title || !category || !content) {
+            console.log('Missing required fields:', { title, category, content }); // Debug log
             return res.status(400).json({ 
                 message: "Missing required fields",
                 details: {
                     title: !title ? "Title is required" : null,
                     category: !category ? "Category is required" : null,
                     content: !content ? "Content is required" : null,
-                    author: !author ? "Author is required" : null
                 }
             });
         }
@@ -247,11 +271,12 @@ app.post('/blogs', upload.single('image'), async (req, res) => {
             category,
             content,
             image,
-            author,
-            published: published === 'true' || published === true
+            author: req.user._id, // Set author from authenticated user
+            published: isPublished, // Set published based on status
+            status: status // Use the status directly from req.body
         });
 
-        console.log('Creating blog with data:', blog); // Debug log
+        console.log('Blog object before saving (POST):', blog); // Added debug log
         await blog.save();
         console.log('Blog created successfully:', blog); // Debug log
         res.status(201).json(blog);
@@ -265,11 +290,35 @@ app.post('/blogs', upload.single('image'), async (req, res) => {
     }
 });
 
-app.get('/blogs', async (req, res) => {
+app.get('/blogs', auth, async (req, res) => {
     try {
-        console.log('Fetching all blogs');
-        const blogs = await Blog.find().populate('author', 'name');
-        console.log('Blogs found:', blogs);
+        console.log('GET /blogs request received.');
+        console.log('Authenticated user for /blogs:', req.user ? { _id: req.user._id, role: req.user.role } : 'Not authenticated');
+
+        let query = {};
+        if (req.user && req.user.role === 'admin') {
+            query = {}; // Admin can see all blogs (published and draft)
+            console.log('Admin is fetching all blogs.');
+        } else if (req.user) {
+            // Authenticated non-admin user sees their own blogs (draft or published) AND all other published blogs
+            query = {
+                $or: [
+                    { status: 'published' },
+                    { author: req.user._id }
+                ]
+            };
+            console.log('Authenticated user is fetching their own blogs and all published blogs.');
+        } else {
+            // Guest user only sees published blogs
+            query = { status: 'published' };
+            console.log('Guest is fetching only published blogs.');
+        }
+
+        console.log('Final query used for /blogs:', query);
+
+        const blogs = await Blog.find(query).populate('author', 'name');
+        console.log(`Blogs found (after query): ${blogs.length}`);
+        console.log('First 3 blogs fetched (for inspection):', blogs.slice(0, 3).map(b => ({ title: b.title, status: b.status, published: b.published })));
         
         if (!blogs || !Array.isArray(blogs)) {
             console.error('Invalid blogs data:', blogs);
@@ -301,11 +350,24 @@ app.get('/blogs', async (req, res) => {
     }
 });
 
-app.get('/blogs/:id', async (req, res) => {
+app.get('/blogs/:id', auth, async (req, res) => {
     try {
         const blog = await Blog.findById(req.params.id).populate('author', 'name');
         if (!blog) return res.status(404).json({ message: "Blog not found" });
         
+        // If blog is a draft, deny access unless user is admin OR author
+        if (blog.status === 'draft') {
+            // Check if user is authenticated and is either an admin or the author of the blog
+            const isAuthorized = req.user && (
+                req.user.role === 'admin' ||
+                (blog.author && blog.author._id.toString() === req.user._id.toString())
+            );
+
+            if (!isAuthorized) {
+                return res.status(403).json({ message: 'Access denied. Blog is a draft and you are not authorized.' });
+            }
+        }
+
         // Process image path for consistency (more robust - prevent double uploads/)
         const blogObj = blog.toObject();
         console.log('Original blog image path (Backend/GET /blogs/:id):', blogObj.image); // DEBUG
@@ -322,40 +384,74 @@ app.get('/blogs/:id', async (req, res) => {
     }
 });
 
-app.put('/blogs/:id', upload.single('image'), async (req, res) => {
+app.put('/blogs/:id', auth, upload.single('image'), async (req, res) => {
     try {
-        const { title, category, content, published } = req.body;
-        const updateData = { title, category, content, published };
+        const { title, category, content, status } = req.body; // Include status in destructuring
+        const updateData = { title, category, content, status }; // Include status
         // Store only the relative path for the image
         if (req.file) {
             updateData.image = path.join('uploads', path.basename(req.file.path));
         }
 
-        const blog = await Blog.findByIdAndUpdate(
-            req.params.id,
-            updateData,
-            { new: true }
-        );
-
+        const blog = await Blog.findById(req.params.id);
         if (!blog) return res.status(404).json({ message: "Blog not found" });
+
+        // Check if user is admin OR author of the blog
+        if (req.user.role !== 'admin' && blog.author._id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Access denied. You are not authorized to update this blog.' });
+        }
+
+        // Update blog fields
+        blog.title = title || blog.title;
+        blog.category = category || blog.category;
+        blog.content = content || blog.content;
+        if (req.file) {
+            blog.image = updateData.image;
+        }
+        // Update status and published based on new values
+        blog.status = status || blog.status;
+        blog.published = (status === 'published'); // Derive published from status
+
+        console.log('Blog object before saving (PUT):', blog); // Added debug log
+        await blog.save();
         res.status(200).json(blog);
     } catch (error) {
+        console.error('Error updating blog:', error);
         res.status(500).json({ message: "Error updating blog" });
     }
 });
 
-app.delete('/blogs/:id', async (req, res) => {
+app.delete('/blogs/:id', auth, async (req, res) => {
     try {
-        const blog = await Blog.findByIdAndDelete(req.params.id);
-        if (!blog) return res.status(404).json({ message: "Blog not found" });
+        console.log('DELETE /blogs/:id request received.');
+        console.log('User attempting delete:', req.user ? { _id: req.user._id, role: req.user.role } : 'Not authenticated');
+        
+        const blog = await Blog.findById(req.params.id);
+        if (!blog) {
+            console.log('Blog not found for deletion:', req.params.id);
+            return res.status(404).json({ message: "Blog not found" });
+        }
+
+        console.log('Blog author ID:', blog.author._id.toString()); // Log the actual ID
+        console.log('Is user admin?', req.user && req.user.role === 'admin');
+        console.log('Does user own blog?', req.user && blog.author._id.toString() === req.user._id.toString()); // Corrected comparison
+
+        // Check if user is admin OR author of the blog
+        if (req.user.role !== 'admin' && blog.author._id.toString() !== req.user._id.toString()) {
+            console.log('Access denied for blog deletion.');
+            return res.status(403).json({ message: 'Access denied. You are not authorized to delete this blog.' });
+        }
+
+        await Blog.deleteOne({ _id: req.params.id }); // Using deleteOne for Mongoose 6+
+        console.log('Blog deleted successfully:', req.params.id);
         res.status(200).json({ message: "Blog deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Error deleting blog" });
+        console.error('Error deleting blog:', error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 // Course Routes
-// Get all courses
 app.get("/courses", async (req, res) => {
     try {
         const courses = await Course.find().populate('enrolledStudents', 'name email');
@@ -365,7 +461,6 @@ app.get("/courses", async (req, res) => {
     }
 });
 
-// Get a specific course
 app.get("/courses/:id", async (req, res) => {
     try {
         const course = await Course.findById(req.params.id).populate('enrolledStudents', 'name email');
@@ -376,7 +471,6 @@ app.get("/courses/:id", async (req, res) => {
     }
 });
 
-// Enroll in a course
 app.post("/courses/:courseId/enroll", async (req, res) => {
     try {
         const { userId } = req.body;
@@ -404,7 +498,6 @@ app.post("/courses/:courseId/enroll", async (req, res) => {
     }
 });
 
-// Get user's enrolled courses
 app.get("/users/:userId/courses", async (req, res) => {
     try {
         const courses = await Course.find({ enrolledStudents: req.params.userId });
@@ -414,7 +507,6 @@ app.get("/users/:userId/courses", async (req, res) => {
     }
 });
 
-// Create sample courses
 app.post("/courses/sample", async (req, res) => {
     try {
         const sampleCourses = [
@@ -443,54 +535,26 @@ app.post("/courses/sample", async (req, res) => {
                 price: 0,
                 lessons: [
                     {
-                        title: "Photoshop Basics",
-                        content: "Introduction to Photoshop tools",
+                        title: "Introduction to Graphic Design",
+                        content: "Explore the basics of graphic design principles",
                         videoUrl: "https://example.com/video3"
                     },
                     {
-                        title: "UI Design Principles",
-                        content: "Learn essential UI design concepts",
+                        title: "Photoshop Essentials",
+                        content: "Learn fundamental Photoshop tools and techniques",
                         videoUrl: "https://example.com/video4"
                     }
                 ]
             }
         ];
-
-        // Clear existing courses
-        await Course.deleteMany({});
-        
-        // Create new courses
-        const courses = await Course.insertMany(sampleCourses);
-        res.status(201).json(courses);
+        await Course.insertMany(sampleCourses);
+        res.status(201).json({ message: 'Sample courses created successfully' });
     } catch (error) {
         console.error('Error creating sample courses:', error);
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Error creating sample courses" });
     }
 });
 
-// Create a new course with image
-app.post("/courses", upload.single('image'), async (req, res) => {
-    try {
-        const { title, description, instructor, price, lessons } = req.body;
-        const image = req.file ? req.file.path : '';
-
-        const course = new Course({
-            title,
-            description,
-            instructor,
-            price,
-            image,
-            lessons: JSON.parse(lessons || '[]')
-        });
-
-        await course.save();
-        res.status(201).json(course);
-    } catch (error) {
-        res.status(500).json({ message: "Error creating course" });
-    }
-});
-
-// Update a course with image
 app.put("/courses/:id", upload.single('image'), async (req, res) => {
     try {
         const { title, description, instructor, price, lessons } = req.body;
@@ -514,6 +578,37 @@ app.put("/courses/:id", upload.single('image'), async (req, res) => {
         res.status(200).json(course);
     } catch (error) {
         res.status(500).json({ message: "Error updating course" });
+    }
+});
+
+app.post("/courses", upload.single('image'), async (req, res) => {
+    try {
+        const { title, description, instructor, price, lessons } = req.body;
+        const image = req.file ? req.file.path : '';
+
+        const course = new Course({
+            title,
+            description,
+            instructor,
+            price,
+            image,
+            lessons: JSON.parse(lessons || '[]')
+        });
+
+        await course.save();
+        res.status(201).json(course);
+    } catch (error) {
+        res.status(500).json({ message: "Error creating course" });
+    }
+});
+
+app.delete('/courses/:id', async (req, res) => {
+    try {
+        const course = await Course.findByIdAndDelete(req.params.id);
+        if (!course) return res.status(404).json({ message: "Course not found" });
+        res.status(200).json({ message: "Course deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 

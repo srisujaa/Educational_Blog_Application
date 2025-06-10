@@ -6,14 +6,16 @@ const auth = async (req, res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
         
         if (!token) {
-            throw new Error();
+            // If no token, proceed without user authentication
+            return next();
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findOne({ _id: decoded._id });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key'); // Use secret key directly if process.env.JWT_SECRET is undefined
+        const user = await User.findOne({ _id: decoded.userId }); // Ensure it's decoded.userId as per your token creation
 
         if (!user) {
-            throw new Error();
+            // If token is invalid or user not found, proceed without user authentication
+            return next();
         }
 
         // Add user info to request object
@@ -21,7 +23,9 @@ const auth = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Please authenticate.' });
+        // If there's an error verifying the token, just log it and proceed without user authentication
+        console.error('Authentication error (token optional):', error.message);
+        next();
     }
 };
 
