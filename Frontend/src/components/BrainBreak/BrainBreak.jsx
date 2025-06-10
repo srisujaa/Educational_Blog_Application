@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button } from 'reactstrap';
 import './brainbreak.css';
 
-const BrainBreak = () => {
+const BrainBreak = (props) => {
     const [currentQuestion, setCurrentQuestion] = useState(null);
     const [userAnswer, setUserAnswer] = useState('');
     const [showAnswer, setShowAnswer] = useState(false);
@@ -115,7 +115,7 @@ const BrainBreak = () => {
 
     if (!quizStarted) {
         return (
-            <section className="brain-break">
+            <section className="brain-break" id={props.id}>
                 <Container>
                     <Row className="justify-content-center">
                         <Col lg="8">
@@ -135,7 +135,7 @@ const BrainBreak = () => {
 
     if (breakTimeOver) {
         return (
-            <section className="brain-break">
+            <section className="brain-break" id={props.id}>
                 <Container>
                     <Row className="justify-content-center">
                         <Col lg="8">
@@ -162,7 +162,7 @@ const BrainBreak = () => {
     }
 
     return (
-        <section className="brain-break">
+        <section className="brain-break" id={props.id}>
             <Container>
                 <Row className="justify-content-center">
                     <Col lg="8">

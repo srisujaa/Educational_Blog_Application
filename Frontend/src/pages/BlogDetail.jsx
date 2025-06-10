@@ -102,60 +102,9 @@ const BlogDetail = () => {
                         )}
 
                         <div className="blog-content">
-                            {blog.title === 'Understanding Machine Learning Algorithms' ? (
-                                <>
-                                    <p>Machine learning is a subset of artificial intelligence that focuses on developing systems that can learn from and make decisions based on data. In today's data-driven world, machine learning algorithms are at the heart of many applications, from recommendation systems to self-driving cars.</p>
-                                    <h3>Types of Machine Learning Algorithms</h3>
-                                    <ul>
-                                        <li><strong>Supervised Learning:</strong> Algorithms learn from labeled data. Common algorithms include Linear Regression, Logistic Regression, Decision Trees, Random Forests, Support Vector Machines, and Neural Networks. Applications: spam detection, image classification, and medical diagnosis.</li>
-                                        <li><strong>Unsupervised Learning:</strong> Algorithms find patterns in unlabeled data. Popular algorithms are K-Means Clustering, Hierarchical Clustering, and Principal Component Analysis (PCA). Applications: customer segmentation, anomaly detection, and data compression.</li>
-                                        <li><strong>Reinforcement Learning:</strong> Algorithms learn by interacting with an environment and receiving feedback. Examples include Q-Learning and Deep Q-Networks. Applications: robotics, game playing (like AlphaGo), and autonomous vehicles.</li>
-                                    </ul>
-                                    <h3>How Do These Algorithms Work?</h3>
-                                    <p>Supervised learning uses historical data to predict future outcomes. Unsupervised learning uncovers hidden patterns or groupings in data. Reinforcement learning optimizes actions based on trial and error to maximize rewards.</p>
-                                    <h3>Choosing the Right Algorithm</h3>
-                                    <ul>
-                                        <li>Understand your data: Is it labeled or unlabeled?</li>
-                                        <li>Define your goal: Classification, regression, clustering, or control?</li>
-                                        <li>Consider interpretability, accuracy, and computational resources.</li>
-                                    </ul>
-                                    <h3>Applications of Machine Learning</h3>
-                                    <ul>
-                                        <li>Healthcare: Disease prediction, personalized medicine</li>
-                                        <li>Finance: Fraud detection, algorithmic trading</li>
-                                        <li>Retail: Recommendation engines, inventory management</li>
-                                        <li>Transportation: Self-driving cars, route optimization</li>
-                                    </ul>
-                                    <p>Whether you're a beginner or an experienced data scientist, understanding these core concepts will help you navigate the rapidly evolving field of machine learning and apply the right techniques to your own projects.</p>
-                                </>
-                            ) : (
-                                blog.content.split('\n').map((paragraph, index) => (
-                                    <p key={index}>{paragraph}</p>
-                                ))
-                            )}
-                            <div className="blog-elaboration">
-                                <h3>What is {blog.title}?</h3>
-                                <p>This article explores the topic of <strong>{blog.title}</strong> in the field of <strong>{blog.category}</strong>. Understanding this topic is essential for anyone interested in expanding their knowledge and skills in this area.</p>
-                                <h3>Key Concepts</h3>
-                                <ul>
-                                    <li>Definition and importance of {blog.title}</li>
-                                    <li>Core principles and foundational ideas</li>
-                                    <li>Common challenges and misconceptions</li>
-                                </ul>
-                                <h3>Applications</h3>
-                                <ul>
-                                    <li>How {blog.title} is used in real-world scenarios</li>
-                                    <li>Industry examples and case studies</li>
-                                    <li>Emerging trends in {blog.category}</li>
-                                </ul>
-                                <h3>Tips for Learners</h3>
-                                <ul>
-                                    <li>Start with the basics and build a strong foundation</li>
-                                    <li>Practice regularly and apply concepts to projects</li>
-                                    <li>Stay updated with the latest developments in {blog.category}</li>
-                                </ul>
-                                <p>By exploring these sections, you'll gain a deeper understanding of <strong>{blog.title}</strong> and how it fits into the broader context of <strong>{blog.category}</strong>.</p>
-                            </div>
+                            {blog.content.split('\n').map((paragraph, index) => (
+                                <p key={index}>{paragraph}</p>
+                            ))}
                         </div>
 
                         {blog.tags && blog.tags.length > 0 && (

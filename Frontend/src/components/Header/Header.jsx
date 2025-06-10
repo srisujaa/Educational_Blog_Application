@@ -32,8 +32,7 @@ const Header = () => {
     { display: "About", url: "/#about" },
     { display: "Blogs", url: "/blogs" },
     { display: "Learning Path", url: "/learning-path" },
-    { display: "Brain Break", url: "/quiz" },
-    { display: "Testimonials", url: "/#testimonials" },
+    { display: "Brain Break", url: "/#brain-break" },
   ];
 
   return (
@@ -42,7 +41,7 @@ const Header = () => {
         <div className="navigation d-flex align-items-center justify-content-between">
           <div className="logo">
             <h2 className="d-flex align-items-center gap-1">
-              <i className="ri-pantone-line"></i> Learners.
+              <i className="ri-pantone-line"></i> EduBlog.
             </h2>
           </div>
 
