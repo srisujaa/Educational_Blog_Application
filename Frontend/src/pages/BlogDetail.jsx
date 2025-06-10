@@ -20,7 +20,13 @@ const BlogDetail = () => {
 
     const fetchBlog = async () => {
         try {
-            const response = await axios.get(`${API_URL}/blogs/${id}`);
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                }
+            };
+            const response = await axios.get(`${API_URL}/blogs/${id}`, config);
             setBlog(response.data);
             setError('');
         } catch (error) {

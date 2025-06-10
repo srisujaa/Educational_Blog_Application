@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Header from "../Header/Header";
-import "./Login.css";
+import "./AdminLogin.css";
 
 const API_URL = "http://localhost:5003";
 
-const Login = () => {
+const AdminLogin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,29 +23,27 @@ const Login = () => {
     setError("");
     
     try {
-      console.log('Attempting to login with:', { 
+      console.log('Attempting admin login with:', { 
         email: formData.email,
         password: '***'
       });
       
       const response = await axios.post(`${API_URL}/login`, formData);
-      console.log('Login response:', response.data);
+      console.log('Admin login response:', response.data);
       
       if (response.data.user && response.data.user._id) {
-        // Check if user is an admin
-        if (response.data.user.role === 'admin') {
-          setError("Please use the admin login page to access admin features.");
+        if (response.data.user.role !== 'admin') {
+          setError("Access denied. This is an admin-only login page.");
           return;
         }
-        
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        navigate("/");
+        navigate("/admin-dashboard"); // Redirect to the new admin dashboard page
       } else {
         setError("Invalid response from server");
       }
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Admin login error:', err);
       if (err.response) {
         setError(err.response.data.message || "Invalid Credentials");
       } else if (err.request) {
@@ -61,15 +59,15 @@ const Login = () => {
   return (
     <div>
       <Header />
-      <div className="login-container">
-        <div className="login-box">
-          <h2>User Login</h2>
+      <div className="admin-login-container">
+        <div className="admin-login-box">
+          <h2>Admin Login</h2>
           {error && <p className="error-message">{error}</p>}
           <form onSubmit={handleSubmit}>
             <input 
               type="email" 
               name="email" 
-              placeholder="Email" 
+              placeholder="Admin Email" 
               onChange={handleChange} 
               value={formData.email}
               required 
@@ -85,15 +83,14 @@ const Login = () => {
               disabled={loading}
             />
             <button type="submit" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Logging in..." : "Admin Login"}
             </button>
           </form>
-          <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
-          <p>Are you an admin? <Link to="/admin-login">Login here</Link></p>
+          <p>Regular user? <Link to="/login">Login here</Link></p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default AdminLogin; 

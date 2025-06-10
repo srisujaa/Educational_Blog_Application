@@ -14,22 +14,31 @@ const UserManagement = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
     const API_URL = 'http://localhost:5003';
 
     useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setCurrentUser(user);
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${API_URL}/users`);
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            };
+            const response = await axios.get(`${API_URL}/users`, config);
             setUsers(response.data);
             setError('');
         } catch (error) {
             console.error('Error fetching users:', error);
-            setError('Failed to fetch users. Please try again.');
+            setError(error.response?.data?.message || 'Failed to fetch users. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -46,11 +55,17 @@ const UserManagement = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            };
             if (editingId) {
-                await axios.put(`${API_URL}/users/${editingId}`, formData);
+                await axios.put(`${API_URL}/users/${editingId}`, formData, config);
                 setSuccess('User updated successfully');
             } else {
-                await axios.post(`${API_URL}/signup`, formData);
+                await axios.post(`${API_URL}/signup`, formData, config);
                 setSuccess('User created successfully');
             }
             setFormData({ name: '', email: '', password: '' });
@@ -78,13 +93,19 @@ const UserManagement = () => {
         if (window.confirm('Are you sure you want to delete this user?')) {
             setLoading(true);
             try {
-                await axios.delete(`${API_URL}/users/${id}`);
+                const token = localStorage.getItem('token');
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                };
+                await axios.delete(`${API_URL}/users/${id}`, config);
                 setSuccess('User deleted successfully');
                 fetchUsers();
                 setError('');
             } catch (error) {
                 console.error('Error deleting user:', error);
-                setError('Failed to delete user. Please try again.');
+                setError(error.response?.data?.message || 'Failed to delete user. Please try again.');
             } finally {
                 setLoading(false);
             }
@@ -92,7 +113,7 @@ const UserManagement = () => {
     };
 
     return (
-        <div>
+        <>
             <Header />
             <div className="user-management-container">
                 <h2>User Management</h2>
@@ -178,25 +199,32 @@ const UserManagement = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.map(user => (
+                                    {users.map((user) => (
                                         <tr key={user._id}>
                                             <td>{user.name}</td>
                                             <td>{user.email}</td>
-                                            <td>
-                                                <button
-                                                    className="btn-edit"
-                                                    onClick={() => handleEdit(user)}
-                                                    disabled={loading}
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    className="btn-delete"
-                                                    onClick={() => handleDelete(user._id)}
-                                                    disabled={loading}
-                                                >
-                                                    Delete
-                                                </button>
+                                            <td className="actions">
+                                                {currentUser && currentUser.role === 'admin' && currentUser._id !== user._id && (
+                                                    <>
+                                                        <button 
+                                                            className="btn-edit"
+                                                            onClick={() => handleEdit(user)}
+                                                            disabled={loading}
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button 
+                                                            className="btn-delete"
+                                                            onClick={() => handleDelete(user._id)}
+                                                            disabled={loading}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {currentUser && currentUser.role === 'admin' && currentUser._id === user._id && (
+                                                    <span style={{ color: '#6c757d' }}>Cannot delete self</span>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}
@@ -206,7 +234,7 @@ const UserManagement = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

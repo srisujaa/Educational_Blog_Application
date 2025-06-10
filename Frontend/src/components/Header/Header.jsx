@@ -81,6 +81,7 @@ const Header = () => {
               ) : (
                 <>
                   <Link to="/login" className="btn btn-outline-primary">Login</Link>
+                  <Link to="/admin-login" className="btn btn-outline-danger">Admin</Link>
                   <Link to="/signup" className="btn btn-primary">Sign Up</Link>
                 </>
               )}

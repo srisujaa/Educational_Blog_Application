@@ -19,6 +19,7 @@ const BlogList = () => {
     const API_URL = 'http://localhost:5003';
 
     useEffect(() => {
+        console.log('BlogList useEffect triggered.');
         // Load current user from localStorage
         const user = JSON.parse(localStorage.getItem('user'));
         setCurrentUser(user);
@@ -26,8 +27,16 @@ const BlogList = () => {
     }, []);
 
     const fetchBlogs = async () => {
+        console.log('fetchBlogs function called.');
         try {
-            const response = await axios.get(`${API_URL}/blogs`);
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                }
+            };
+            console.log('Attempting to fetch blogs from:', `${API_URL}/blogs`, 'with config:', config); // Debug log before axios.get
+            const response = await axios.get(`${API_URL}/blogs`, config);
             if (response.data && Array.isArray(response.data)) {
                 setBlogs(response.data);
                 // Extract unique categories
@@ -39,9 +48,26 @@ const BlogList = () => {
                 setBlogs([]);
             }
         } catch (error) {
-            setError('Failed to fetch blogs. Please try again later.');
+            console.error('Error fetching blogs:', error.message); // More detailed error log
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error('Error response data:', error.response.data);
+                console.error('Error response status:', error.response.status);
+                console.error('Error response headers:', error.response.headers);
+                setError(`Failed to fetch blogs: ${error.response.status} ${error.response.data.message || error.response.statusText}`);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('Error request (no response):', error.request);
+                setError('Failed to fetch blogs: No response from server. Please check backend.');
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error message:', error.message);
+                setError(`Failed to fetch blogs: ${error.message}`);
+            }
             setBlogs([]);
         } finally {
+            console.log('fetchBlogs function finished.'); // Debug log in finally block
             setLoading(false);
         }
     };

@@ -1,0 +1,116 @@
+.admin-dashboard-container {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 3rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.admin-dashboard-container h1 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 2.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+.admin-dashboard-container p {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+}
+
+.dashboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.dashboard-button {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    padding: 30px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none; /* In case it's used as Link */
+}
+
+.dashboard-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.manage-blogs {
+    background-color: #17bf9e; /* Matches existing primary theme color */
+}
+
+.manage-blogs:hover {
+    background-color: #15a98a;
+}
+
+.manage-users {
+    background-color: #007bff; /* A nice blue for users */
+}
+
+.manage-users:hover {
+    background-color: #0056b3;
+}
+
+/* Add icons to buttons if desired */
+.dashboard-button::before {
+    font-family: "Font Awesome 5 Free"; /* Assuming Font Awesome is used */
+    font-weight: 900;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.manage-blogs::before {
+    content: "\f15c"; /* Example: fa-file-alt icon */
+}
+
+.manage-users::before {
+    content: "\f007"; /* Example: fa-user icon */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .admin-dashboard-container {
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .admin-dashboard-container h1 {
+        font-size: 2.2rem;
+    }
+
+    .admin-dashboard-container p {
+        font-size: 1rem;
+    }
+
+    .dashboard-actions {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .dashboard-button {
+        min-width: unset;
+        width: 100%;
+        font-size: 1.3rem;
+        padding: 20px 15px;
+    }
+} 

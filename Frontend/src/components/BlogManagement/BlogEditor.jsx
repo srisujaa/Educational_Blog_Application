@@ -37,13 +37,32 @@ const BlogEditor = () => {
 
     const fetchBlog = async () => {
         try {
-            const response = await axios.get(`${API_URL}/blogs/${id}`);
+            const token = localStorage.getItem('token');
+            const config = {
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : '',
+                }
+            };
+            console.log('Attempting to fetch blog details for ID:', id, 'with config:', config); // Debug log
+            const response = await axios.get(`${API_URL}/blogs/${id}`, config);
+            console.log('Successfully fetched blog details:', response.data); // Debug log
             setBlog(response.data);
             if (response.data.image) {
                 setImagePreview(`${API_URL}/${response.data.image}`);
             }
         } catch (error) {
-            setError('Failed to fetch blog details');
+            console.error('Error fetching blog details:', error);
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+                console.error('Error response status:', error.response.status);
+                setError(`Failed to fetch blog details: ${error.response.status} ${error.response.data.message || error.response.statusText}`);
+            } else if (error.request) {
+                console.error('Error request (no response):', error.request);
+                setError('Failed to fetch blog details: No response from server. Please check backend.');
+            } else {
+                console.error('Error message:', error.message);
+                setError(`Failed to fetch blog details: ${error.message}`);
+            }
         }
     };
 
