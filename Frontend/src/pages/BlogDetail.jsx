@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Header/Header';
@@ -95,17 +95,25 @@ const BlogDetail = () => {
                             </div>
                         </div>
 
-                        {blog.image && (
-                            <div className="blog-image">
-                                <img src={`${API_URL}/${blog.image}`} alt={blog.title} />
-                            </div>
-                        )}
-
-                        <div className="blog-content">
-                            {blog.content.split('\n').map((paragraph, index) => (
-                                <p key={index}>{paragraph}</p>
-                            ))}
-                        </div>
+                        <Row className="blog-content-image-layout">
+                            <Col md="8">
+                                <div className="blog-content">
+                                    {blog.content.split('\n').map((paragraph, index) => (
+                                        <p key={index}>{paragraph}</p>
+                                    ))}
+                                </div>
+                            </Col>
+                            <Col md="4">
+                                {blog.image && (
+                                    <div className="blog-image-detail">
+                                        <img 
+                                            src={`${API_URL}/${blog.image}`}
+                                            alt={blog.title} 
+                                        />
+                                    </div>
+                                )}
+                            </Col>
+                        </Row>
 
                         {blog.tags && blog.tags.length > 0 && (
                             <div className="blog-tags">

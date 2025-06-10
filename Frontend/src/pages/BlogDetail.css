@@ -56,12 +56,18 @@
     display: none;
 }
 
-.blog-image {
-    margin: 30px 0;
-    text-align: center;
+/* New styles for the content-image layout */
+.blog-content-image-layout {
+    margin-top: 30px;
+    align-items: flex-start; /* Align items to the top */
 }
 
-.blog-image img {
+.blog-image-detail {
+    text-align: right; /* Align image to the right within its column */
+    padding-left: 20px; /* Add some spacing between content and image */
+}
+
+.blog-image-detail img {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
@@ -161,5 +167,19 @@
 
     .blog-content {
         font-size: 1rem;
+    }
+    /* Adjust layout for smaller screens */
+    .blog-content-image-layout {
+        flex-direction: column; /* Stack columns on small screens */
+    }
+
+    .blog-image-detail {
+        text-align: center; /* Center image on small screens */
+        padding-left: 0; /* Remove padding */
+        margin-top: 20px; /* Add space between content and image */
+    }
+
+    .blog-image-detail img {
+        max-width: 80%; /* Smaller max-width for image on small screens */
     }
 } 

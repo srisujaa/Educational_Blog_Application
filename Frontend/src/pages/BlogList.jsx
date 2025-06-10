@@ -80,13 +80,15 @@ const BlogList = () => {
                         <h1>Educational Blog Posts</h1>
                         <p>Explore our collection of educational articles and resources</p>
                         <div className="header-actions">
-                            <Button
-                                color="primary"
-                                className="create-blog-btn"
-                                onClick={() => navigate('/blogs/create')}
-                            >
-                                Create New Blog Post
-                            </Button>
+                            {currentUser && (
+                                <Button
+                                    color="primary"
+                                    className="create-blog-btn"
+                                    onClick={() => navigate('/blogs/create')}
+                                >
+                                    Create New Blog Post
+                                </Button>
+                            )}
                             <Button
                                 color="info"
                                 className="learning-path-btn"
@@ -132,20 +134,25 @@ const BlogList = () => {
                             {filteredBlogs.map((blog) => (
                                 <Col lg="4" md="6" key={blog._id}>
                                     <div className="blog-card">
-                                        {blog.image && (
-                                            <div className="blog-image">
-                                                <img src={`${API_URL}/${blog.image}`} alt={blog.title} />
-                                            </div>
-                                        )}
+                                        <div className="blog-category">{blog.category}</div>
+                                        <div className="blog-image">
+                                            {blog.image ? (
+                                                <img 
+                                                    src={`${API_URL}/${blog.image}`}
+                                                    alt={blog.title} 
+                                                />
+                                            ) : (
+                                                <div className="image-placeholder">No Image Available</div>
+                                            )}
+                                        </div>
                                         <div className="blog-content">
-                                            <div className="blog-category">{blog.category}</div>
                                             <h3>{blog.title}</h3>
                                             <p>{blog.content.substring(0, 150)}...</p>
                                             <div className="blog-actions">
                                                 <Link to={`/blogs/${blog._id}`} className="read-more">
                                                     Read More
                                                 </Link>
-                                                {isBlogAuthor(blog) && (
+                                                {isBlogAuthor(blog) && currentUser && (
                                                     <div className="admin-actions">
                                                         <Button
                                                             color="info"

@@ -142,7 +142,7 @@ const BlogManagement = () => {
             image: null,
             published: blog.published
         });
-        setPreviewImage(blog.image ? `${API_URL}/${blog.image}` : null);
+        setPreviewImage(blog.image ? `${API_URL}/uploads/${blog.image.split(/\|\//).pop()}` : null);
         setEditingId(blog._id);
     };
 
@@ -285,4 +285,4 @@ const BlogManagement = () => {
     );
 };
 
-export default BlogManagement; 
+export default BlogManagement;

@@ -10,16 +10,18 @@ const footerQuickLinks = [
   },
   {
     display: "About US",
-    url: "#",
+    url: "/#about",
   },
   {
     display: "Blogs",
     url: "/blogs",
   },
+  /*
   {
     display: "Testimonials",
     url: "#testimonials",
   },
+  */
 ];
 
 const footerInfoLinks = [

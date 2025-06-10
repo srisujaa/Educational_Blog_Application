@@ -14,10 +14,7 @@ const HeroSection = () => {
                 Anytime Anywhere <br /> Learn on your <br /> Suitable Schedule
               </h2>
               <p className="mb-5">
-                Unlock your potential by learning at your own pace and from the
-                comfort of your home. Explore a variety of courses designed to
-                fit your lifestyle and schedule, empowering you to achieve your
-                goals without boundaries.
+                Learn on your schedule with the flexibility to study anytime and from anywhere. Our platform empowers you to unlock your potential at your own pace, offering a wide range of resources tailored to fit your lifestyle—no boundaries, just learning.
               </p>
             </div>
             <div className="search">

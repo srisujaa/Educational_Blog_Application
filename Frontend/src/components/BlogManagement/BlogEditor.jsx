@@ -180,7 +180,7 @@ const BlogEditor = () => {
                             />
                             {imagePreview && (
                                 <div className="image-preview">
-                                    <img src={imagePreview} alt="Preview" />
+                                    <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px' }} />
                                 </div>
                             )}
                         </div>

@@ -224,7 +224,8 @@ app.post('/blogs', upload.single('image'), async (req, res) => {
     try {
         console.log('Received blog creation request:', req.body); // Debug log
         const { title, category, content, author, published } = req.body;
-        const image = req.file ? req.file.path : '';
+        // Store only the relative path for the image
+        const image = req.file ? path.join('uploads', path.basename(req.file.path)) : '';
         
         console.log('Parsed data:', { title, category, content, author, published, image }); // Debug log
 
@@ -275,7 +276,21 @@ app.get('/blogs', async (req, res) => {
             return res.status(500).json({ message: "Invalid blogs data format" });
         }
         
-        res.status(200).json(blogs);
+        // Process image paths for consistency (more robust - prevent double uploads/)
+        const processedBlogs = blogs.map(blog => {
+            const blogObj = blog.toObject();
+            console.log('Original blog image path (Backend/GET /blogs):', blogObj.image); // DEBUG
+            if (blogObj.image) {
+                // Extract filename using regex to handle various path separators
+                const filename = blogObj.image.split(/[\\/]/).pop();
+                // Only prepend 'uploads/' if it's not already there
+                blogObj.image = filename.startsWith('uploads/') ? filename : `uploads/${filename}`;
+            }
+            console.log('Processed blog image path (Backend/GET /blogs):', blogObj.image); // DEBUG
+            return blogObj;
+        });
+
+        res.status(200).json(processedBlogs);
     } catch (error) {
         console.error('Error fetching blogs:', error);
         res.status(500).json({ 
@@ -290,7 +305,18 @@ app.get('/blogs/:id', async (req, res) => {
     try {
         const blog = await Blog.findById(req.params.id).populate('author', 'name');
         if (!blog) return res.status(404).json({ message: "Blog not found" });
-        res.status(200).json(blog);
+        
+        // Process image path for consistency (more robust - prevent double uploads/)
+        const blogObj = blog.toObject();
+        console.log('Original blog image path (Backend/GET /blogs/:id):', blogObj.image); // DEBUG
+        if (blogObj.image) {
+            // Extract filename using regex to handle various path separators
+            const filename = blogObj.image.split(/[\\/]/).pop();
+            // Only prepend 'uploads/' if it's not already there
+            blogObj.image = filename.startsWith('uploads/') ? filename : `uploads/${filename}`;
+        }
+        console.log('Processed blog image path (Backend/GET /blogs/:id):', blogObj.image); // DEBUG
+        res.status(200).json(blogObj);
     } catch (error) {
         res.status(500).json({ message: "Error fetching blog" });
     }
@@ -300,9 +326,9 @@ app.put('/blogs/:id', upload.single('image'), async (req, res) => {
     try {
         const { title, category, content, published } = req.body;
         const updateData = { title, category, content, published };
-        
+        // Store only the relative path for the image
         if (req.file) {
-            updateData.image = req.file.path;
+            updateData.image = path.join('uploads', path.basename(req.file.path));
         }
 
         const blog = await Blog.findByIdAndUpdate(
