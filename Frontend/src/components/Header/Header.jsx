@@ -62,7 +62,7 @@ const Header = () => {
               
 
               {user ? (
-                <div className="user-menu">
+                <div className="user-menu d-flex align-items-center gap-2">
                   <span className="username">👤 {user.name}</span>
                   <button
                     className="btn btn-outline-danger"

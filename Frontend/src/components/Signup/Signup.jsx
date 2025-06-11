@@ -51,7 +51,6 @@ const Signup = () => {
       console.log('Signup response:', response.data);
 
       if (response.data.user && response.data.user._id) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
         alert("Signup successful! Please login to continue.");
         navigate("/login");
       } else {
